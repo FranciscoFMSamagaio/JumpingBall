@@ -99,6 +99,10 @@ while running:
     if dist_to_center + ball_radius >= inner_radius:
         # Increase ball size on bounce
         ball_radius += 10  # Adjust this value as needed
+
+        # Prevent the ball from getting too large
+        if ball_radius > circle_radius - circle_width:
+            ball_radius = circle_radius - circle_width
         
         # Compute normal vector at the point of collision
         normal_x = dx / dist_to_center
