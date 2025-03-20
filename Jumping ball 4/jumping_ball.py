@@ -71,12 +71,16 @@ def draw_background(surface):
             surface.blit(rendered_text, (x_pos, y_pos))
 
 # Create frames directory if it doesn't exist
-if not os.path.exists("frames"):
-    os.makedirs("frames")
+if not os.path.exists("Jumping ball 4/frames"):
+    os.makedirs("Jumping ball 4/frames")
 
 frame_count = 0
 frame_delay = 10  # Faster change rate for 0s and 1s
 saved_frame_count = 0  # Track actual saved frames
+
+# Add this before the game loop
+last_collision_time = 0  # Track last collision frame
+collision_cooldown = 10  # Frames to wait before shrinking again
 
 while running:
     for event in pygame.event.get():
@@ -104,8 +108,10 @@ while running:
         if ball_radius > circle_radius - circle_width:
             ball_radius = circle_radius - circle_width
                     
-        # Shrink the circle
-        circle_radius -= 5  # Adjust shrink rate
+        # **Fix: Ensure the circle shrinks only once per collision event**
+        if frame_count - last_collision_time > collision_cooldown:
+            circle_radius -= 5 # Adjust shrink rate
+            last_collision_time = frame_count  # Update collision time
 
         # Prevent the circle from getting too small
         if circle_radius < ball_radius + circle_width:
@@ -150,7 +156,7 @@ while running:
     
     # Save every 2nd frame, but ensure filenames are sequential
     if frame_count % 2 == 0:
-        pygame.image.save(screen, f"frames/frame_{saved_frame_count:04d}.png")
+        pygame.image.save(screen, f"Jumping ball 4/frames/frame_{saved_frame_count:04d}.png")
         saved_frame_count += 1  # Only increment after saving
 
     if frame_count % frame_delay == 0:
@@ -161,13 +167,14 @@ while running:
 
 pygame.quit()
 
-if os.path.exists("output.mp4"):
-    os.remove("output.mp4")
+if os.path.exists("Jumping ball 4/output.mp4"):
+    os.remove("Jumping ball 4/output.mp4")
 subprocess.run([
-    "ffmpeg", "-framerate", "60", "-i", "frames/frame_%04d.png",
-    "-c:v", "libx264", "-pix_fmt", "yuv420p", "output.mp4"
+    "ffmpeg", "-framerate", "60", "-i", "Jumping ball 4/frames/frame_%04d.png",
+    "-c:v", "libx264", "-pix_fmt", "yuv420p", "Jumping ball 4/output.mp4"
 ])
 
 # Delete all frames in the "frames" folder
-if os.path.exists("frames"):
-    shutil.rmtree("frames")  # Delete entire folder
+if os.path.exists("Jumping ball 4/frames"):
+    shutil.rmtree("Jumping ball 4/frames")  # Delete entire folder
+

@@ -71,8 +71,8 @@ def draw_background(surface):
             surface.blit(rendered_text, (x_pos, y_pos))
 
 # Create frames directory if it doesn't exist
-if not os.path.exists("frames"):
-    os.makedirs("frames")
+if not os.path.exists("Jumping ball 2/frames"):
+    os.makedirs("Jumping ball 2/frames")
 
 frame_count = 0
 frame_delay = 10  # Faster change rate for 0s and 1s
@@ -143,7 +143,7 @@ while running:
     
     # Save every 2nd frame, but ensure filenames are sequential
     if frame_count % 2 == 0:
-        pygame.image.save(screen, f"frames/frame_{saved_frame_count:04d}.png")
+        pygame.image.save(screen, f"Jumping ball 2/frames/frame_{saved_frame_count:04d}.png")
         saved_frame_count += 1  # Only increment after saving
 
     if frame_count % frame_delay == 0:
@@ -154,13 +154,14 @@ while running:
 
 pygame.quit()
 
-if os.path.exists("output.mp4"):
-    os.remove("output.mp4")
+if os.path.exists("Jumping ball 2/output.mp4"):
+    os.remove("Jumping ball 2/output.mp4")
 subprocess.run([
-    "ffmpeg", "-framerate", "60", "-i", "frames/frame_%04d.png",
-    "-c:v", "libx264", "-pix_fmt", "yuv420p", "output.mp4"
+    "ffmpeg", "-framerate", "60", "-i", "Jumping ball 2/frames/frame_%04d.png",
+    "-c:v", "libx264", "-pix_fmt", "yuv420p", "Jumping ball 2/output.mp4"
 ])
 
 # Delete all frames in the "frames" folder
-if os.path.exists("frames"):
-    shutil.rmtree("frames")  # Delete entire folder
+if os.path.exists("Jumping ball 2/frames"):
+    shutil.rmtree("Jumping ball 2/frames")  # Delete entire folder
+

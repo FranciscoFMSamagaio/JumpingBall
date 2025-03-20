@@ -29,7 +29,7 @@ circle_radius = 500  # Increased for high-res rendering
 circle_width = 20  # Thicker for visibility
 
 # Ball properties
-ball_radius = 50  # Increased for high-res rendering
+ball_radius = 60  # Increased for high-res rendering
 
 # Generate a random position in the upper half of the circle
 angle = random.uniform(math.pi, 2 * math.pi)  # Restrict to upper semicircle
@@ -44,8 +44,8 @@ angle = random.uniform(0, 2 * math.pi)  # Random angle in radians
 speed = 8  # Higher initial speed for visibility
 ball_vel = pygame.Vector2(speed * math.cos(angle), speed * math.sin(angle))
 
-gravity = 0.20  # Acceleration due to gravity
-damping = 0.98  # Energy loss on bounce
+gravity = 0.15  # Acceleration due to gravity
+damping = 1 # Energy loss on bounce
 
 running = True
 clock = pygame.time.Clock()
@@ -71,12 +71,16 @@ def draw_background(surface):
             surface.blit(rendered_text, (x_pos, y_pos))
 
 # Create frames directory if it doesn't exist
-if not os.path.exists("frames"):
-    os.makedirs("frames")
+if not os.path.exists("Jumping ball 3/frames"):
+    os.makedirs("Jumping ball 3/frames")
 
 frame_count = 0
 frame_delay = 10  # Faster change rate for 0s and 1s
 saved_frame_count = 0  # Track actual saved frames
+
+# Add this before the game loop
+last_collision_time = 0  # Track last collision frame
+collision_cooldown = 10  # Frames to wait before shrinking again
 
 while running:
     for event in pygame.event.get():
@@ -97,11 +101,6 @@ while running:
     inner_radius = circle_radius - circle_width  # Adjusted inner boundary
 
     if dist_to_center + ball_radius >= inner_radius:
-        # Shrink the circle
-        circle_radius -= 10  # Adjust shrink rate
-        if circle_radius < ball_radius + circle_width:  # Prevent the circle from getting too small
-            circle_radius = ball_radius + circle_width
-
         # Compute normal vector at the point of collision
         normal_x = dx / dist_to_center
         normal_y = dy / dist_to_center
@@ -118,6 +117,15 @@ while running:
         overlap = (dist_to_center + ball_radius) - inner_radius
         ball_pos.x -= overlap * normal_x
         ball_pos.y -= overlap * normal_y
+
+        # **Fix: Ensure the circle shrinks only once per collision event**
+        if frame_count - last_collision_time > collision_cooldown:
+            circle_radius -= 10  # Adjust shrink rate
+            last_collision_time = frame_count  # Update collision time
+
+        # Prevent the circle from getting too small
+        if circle_radius < ball_radius + circle_width:
+            circle_radius = ball_radius + circle_width
 
     # Drawing
     high_res_surface.fill(BLACK)
@@ -141,7 +149,7 @@ while running:
     
     # Save every 2nd frame, but ensure filenames are sequential
     if frame_count % 2 == 0:
-        pygame.image.save(screen, f"frames/frame_{saved_frame_count:04d}.png")
+        pygame.image.save(screen, f"Jumping ball 3/frames/frame_{saved_frame_count:04d}.png")
         saved_frame_count += 1  # Only increment after saving
 
     if frame_count % frame_delay == 0:
@@ -152,13 +160,13 @@ while running:
 
 pygame.quit()
 
-if os.path.exists("output.mp4"):
-    os.remove("output.mp4")
+if os.path.exists("Jumping ball 3/output.mp4"):
+    os.remove("Jumping ball 3/output.mp4")
 subprocess.run([
-    "ffmpeg", "-framerate", "60", "-i", "frames/frame_%04d.png",
-    "-c:v", "libx264", "-pix_fmt", "yuv420p", "output.mp4"
+    "ffmpeg", "-framerate", "60", "-i", "Jumping ball 3/frames/frame_%04d.png",
+    "-c:v", "libx264", "-pix_fmt", "yuv420p", "Jumping ball 3/output.mp4"
 ])
 
 # Delete all frames in the "frames" folder
-if os.path.exists("frames"):
-    shutil.rmtree("frames")  # Delete entire folder
+if os.path.exists("Jumping ball 3/frames"):
+    shutil.rmtree("Jumping ball 3/frames")  # Delete entire folder
