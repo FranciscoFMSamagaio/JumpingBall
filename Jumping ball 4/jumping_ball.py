@@ -44,7 +44,7 @@ angle = random.uniform(0, 2 * math.pi)  # Random angle in radians
 speed = 8  # Higher initial speed for visibility
 ball_vel = pygame.Vector2(speed * math.cos(angle), speed * math.sin(angle))
 
-gravity = 0.20  # Acceleration due to gravity
+gravity = 0.15  # Acceleration due to gravity
 damping = 0.98  # Energy loss on bounce
 
 running = True

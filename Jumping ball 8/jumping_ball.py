@@ -49,10 +49,10 @@ ball_pos = pygame.Vector2(
 
 # Generate a random initial direction
 angle = random.uniform(0, 2 * math.pi)  # Random angle in radians
-speed = 7.5  # Higher initial speed for visibility
+speed = 8  # Higher initial speed for visibility
 ball_vel = pygame.Vector2(speed * math.cos(angle), speed * math.sin(angle))
 
-gravity = 0.2  # Acceleration due to gravity
+gravity = 0.15  # Acceleration due to gravity
 damping = 0.98  # Energy loss on bounce
 
 running = True
@@ -88,6 +88,10 @@ saved_frame_count = 0  # Track actual saved frames
 
 trail_positions = [ball_pos.copy() for _ in range(NUM_TRAILING_BALLS)]
 
+# Add this before the game loop
+last_collision_time = 0  # Track last collision frame
+collision_cooldown = 10  # Frames to wait before shrinking again
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -119,8 +123,10 @@ while running:
         if ball_radius > circle_radius - circle_width:
             ball_radius = circle_radius - circle_width
                     
-        # Shrink the circle
-        circle_radius -= 5  # Adjust shrink rate
+        # **Fix: Ensure the circle shrinks only once per collision event**
+        if frame_count - last_collision_time > collision_cooldown:
+            circle_radius -= 5 # Adjust shrink rate
+            last_collision_time = frame_count  # Update collision time
 
         # Prevent the circle from getting too small
         if circle_radius < ball_radius + circle_width:

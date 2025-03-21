@@ -49,10 +49,10 @@ ball_pos = pygame.Vector2(
 
 # Generate a random initial direction
 angle = random.uniform(0, 2 * math.pi)  # Random angle in radians
-speed = 7.5  # Higher initial speed for visibility
+speed = 8  # Higher initial speed for visibility
 ball_vel = pygame.Vector2(speed * math.cos(angle), speed * math.sin(angle))
 
-gravity = 0.2  # Acceleration due to gravity
+gravity = 0.15  # Acceleration due to gravity
 damping = 0.98  # Energy loss on bounce
 
 running = True
@@ -79,8 +79,8 @@ def draw_background(surface):
             surface.blit(rendered_text, (x_pos, y_pos))
 
 # Create frames directory if it doesn't exist
-if not os.path.exists("frames"):
-    os.makedirs("frames")
+if not os.path.exists("Jumping ball 6/frames"):
+    os.makedirs("Jumping ball 6/frames")
 
 frame_count = 0
 frame_delay = 10  # Faster change rate for 0s and 1s
@@ -168,7 +168,7 @@ while running:
     
     # Save every 2nd frame, but ensure filenames are sequential
     if frame_count % 2 == 0:
-        pygame.image.save(screen, f"frames/frame_{saved_frame_count:04d}.png")
+        pygame.image.save(screen, f"Jumping ball 6/frames/frame_{saved_frame_count:04d}.png")
         saved_frame_count += 1  # Only increment after saving
 
     if frame_count % frame_delay == 0:
@@ -179,13 +179,13 @@ while running:
 trail_positions
 pygame.quit()
 
-if os.path.exists("output.mp4"):
-    os.remove("output.mp4")
+if os.path.exists("Jumping ball 6/output.mp4"):
+    os.remove("Jumping ball 6/output.mp4")
 subprocess.run([
-    "ffmpeg", "-framerate", "60", "-i", "frames/frame_%04d.png",
-    "-c:v", "libx264", "-pix_fmt", "yuv420p", "output.mp4"
+    "ffmpeg", "-framerate", "60", "-i", "Jumping ball 6/frames/frame_%04d.png",
+    "-c:v", "libx264", "-pix_fmt", "yuv420p", "Jumping ball 6/output.mp4"
 ])
 
 # Delete all frames in the "frames" folder
-if os.path.exists("frames"):
-    shutil.rmtree("frames")  # Delete entire folder
+if os.path.exists("Jumping ball 6/frames"):
+    shutil.rmtree("Jumping ball 6/frames")  # Delete entire folder
